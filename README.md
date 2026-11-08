@@ -6,10 +6,10 @@ UI test automation for the admin panel of [Pretix](https://github.com/pretix/pre
 
 | Metric | Value |
 |---|---|
-| Total Tests | [20] |
-| Passed | [19] |
-| Failed | [1] |
-| Skipped | [0] |
+| Total Tests | 20 |
+| Passed | 19 |
+| Failed | 1 |
+| Skipped | 0 |
 | Duration | 5 min 46 sec |
 | CI/CD | Jenkins |
 | Test Report | HTML Report |
