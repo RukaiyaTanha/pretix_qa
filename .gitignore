@@ -24,3 +24,9 @@ screenshots/
 # OS
 .DS_Store
 Thumbs.db
+
+# Debug images in the project root
+*.png
+
+# Logs
+*.log
