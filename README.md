@@ -1,169 +1,114 @@
-# Pretix QA Automation
+# Pretix QA Automation Framework
 
-A UI test automation project for [Pretix](https://pretix.eu/), built with Python, Selenium WebDriver and Pytest. The project focuses on testing the product category, product and quota management features of the Pretix event ticketing platform.
+UI test automation for the admin panel of [Pretix](https://github.com/pretix/pretix), an open-source ticketing and event management platform. Built with Python, Selenium, and Pytest using the Page Object Model (POM), and integrated with a Jenkins pipeline.
 
-The automation suite uses the Page Object Model (POM) to keep test logic and page interactions separate.
+## Latest Results
+
+| Metric | Value |
+|---|---|
+| Test Duration | 5 min 46 sec |
+| Test Framework | Pytest |
+| UI Automation | Selenium WebDriver |
+| CI/CD | Jenkins |
+| Report | HTML test report |
+
+The test suite covers product category management, product management, and quota management.
+
+The HTML report is generated as `report.html` after each test run. Jenkins archives the report as a build artifact.
+
+## What Is Tested
+
+| Area | Scenarios |
+|---|---|
+| Product Categories | Open category page, create category, empty-name validation, edit category name, change category type, delete unused category |
+| Products | Open product list, create product, missing-name validation, negative-price validation, edit product name, update product price, add product description, duplicate product name, delete unused product |
+| Quotas | Open quota management page, create quota with valid capacity, create quota with zero capacity, assign an additional product to an existing quota, change quota capacity |
 
 ## Tech Stack
 
 - Python 3.14
 - Selenium WebDriver
-- Pytest
-- pytest-html
-- Google Chrome
+- Pytest, pytest-html
+- Page Object Model
 - Jenkins
-- Git and GitHub
+- Git, GitHub
+- Chrome WebDriver
 
-## Features Tested
+## Project Structure
 
-### 1. Product Category Management
+```text
+Pretix_QA/
+│
+├── config/              Configuration and environment settings
+├── pages/               Page Object classes
+├── tests/               UI automation test cases
+├── screenshots/         Screenshots captured during test runs
+├── .venv/               Python virtual environment (local only)
+├── conftest.py          Pytest fixtures
+├── pytest.ini           Pytest settings
+├── Jenkinsfile          Jenkins pipeline
+├── requirements.txt     Python dependencies
+├── .gitignore           Git ignored files
+└── README.md            Project documentation
+```
 
-- Open product categories page
-- Create a category with valid information
-- Validate an empty category name
-- Edit an existing category name
-- Change category type
-- Delete an unused category
+## Getting Started
 
-### 2. Product Management
-
-- Open product list
-- Create a product with valid information
-- Validate an empty product name
-- Validate negative product price
-- Edit product name
-- Edit product price
-- Add product description
-- Create products with duplicate names
-- Delete an unused product
-
-### 3. Quota Management
-
-- Open quota management page
-- Create a quota with valid capacity
-- Create a quota with zero capacity
-- Assign an additional product to an existing quota
-- Change quota capacity
-
-## Local Setup
-
-### Prerequisites
-
-- Python 3.14 or compatible version
-- Google Chrome
-- Git
-- A running local Pretix application
-
-### 1. Clone the repository
+**Prerequisites:** Python 3.14, Google Chrome, Git, and a running Pretix instance with an admin account.
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/RukaiyaTanha/pretix_qa.git
+
+# 2. Open the project folder
 cd pretix_qa
-```
 
-### 2. Create a virtual environment
+# 3. Create a virtual environment
+python -m venv .venv
 
-Windows PowerShell:
+# 4. Activate the environment (Windows)
+.venv\Scripts\activate
 
-```powershell
-py -3.14 -m venv .venv
-.venv\Scripts\Activate.ps1
-```
-
-### 3. Install dependencies
-
-```powershell
+# 5. Install dependencies
 pip install -r requirements.txt
 ```
 
-### 4. Configure environment variables
+Configure the following environment variables before running the tests:
 
-Set your Pretix administrator credentials in PowerShell:
-
-```powershell
-$env:ADMIN_EMAIL="your-admin-email"
-$env:ADMIN_PASSWORD="your-admin-password"
+```text
+ADMIN_EMAIL=your_admin_email
+ADMIN_PASSWORD=your_admin_password
 ```
 
-The test configuration reads these values through environment variables. Do not commit actual credentials to GitHub.
+The application URL is configured in `config/config.py`.
 
-### 5. Run the tests
+Run all tests and generate an HTML report:
 
-Run the complete suite:
-
-```powershell
-pytest tests/ -v -s
-```
-
-Generate an HTML report:
-
-```powershell
+```bash
 pytest tests/ -v -s --html=report.html --self-contained-html
 ```
 
-Open `report.html` in a browser to review the execution results.
+Run a single test file:
 
-## Jenkins CI Pipeline
+```bash
+pytest tests/test_file_name.py -v -s
+```
 
-The project includes a `Jenkinsfile` for automated test execution.
+## CI/CD
 
-The pipeline performs these steps:
+The `Jenkinsfile` defines the **Pretix-QA-Pipeline** job.
 
-1. Checks the execution environment.
+The pipeline:
+
+1. Checks the Python and Git environments.
 2. Checks whether the local Pretix application is reachable.
-3. Creates a Python virtual environment.
+3. Creates the Python virtual environment if needed.
 4. Installs project dependencies.
-5. Retrieves Pretix admin credentials from Jenkins Credentials.
-6. Executes the Selenium test suite.
-7. Archives the generated HTML test report.
+5. Runs the Selenium automation test suite.
+6. Archives the generated HTML report as a Jenkins build artifact.
 
-### Jenkins Credentials
+The project is maintained on GitHub, with Jenkins used to execute the UI automation suite.
 
-Create a Jenkins credential with the following ID:
+## Known Application Issue
 
-```text
-pretix-admin-credentials
-```
-
-Use the **Username with password** credential type.
-
-The Jenkinsfile passes the credentials as:
-
-```text
-ADMIN_EMAIL
-ADMIN_PASSWORD
-```
-
-Actual credentials must remain outside the repository.
-
-### Pipeline Execution
-
-The Jenkins job uses:
-
-- Definition: Pipeline script from SCM
-- SCM: Git
-- Repository: `https://github.com/RukaiyaTanha/pretix_qa.git`
-- Branch: `main`
-- Script Path: `Jenkinsfile`
-
-The HTML report is available under the build's **Build Artifacts** section.
-
-## Current Test Execution Results
-
-Latest recorded execution:
-
-| Result | Count |
-|---|---:|
-| Passed | 19 |
-| Failed | 1 |
-| Total | 20 |
-
-### Known Application Defect
-
-**Negative Product Price Validation**
-
-The negative-price test found that Pretix accepted and saved a product with a negative price instead of rejecting the value.
-
-This is recorded as an application defect. The failed test is intentionally retained so that the issue remains visible during regression execution.
-
-
+During negative testing, Pretix accepted a product with a negative price instead of rejecting the input. This was recorded as an application-side validation issue.
