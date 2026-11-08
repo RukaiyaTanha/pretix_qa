@@ -1,0 +1,1446 @@
+{
+  "info": {
+    "_postman_id": "f2d74f9b-e495-4c44-8e43-90a00ecc9552",
+    "name": "Pretix API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47792427",
+    "_collection_link": "https://go.postman.co/collection/47792427-f2d74f9b-e495-4c44-8e43-90a00ecc9552?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "API01 - Get Organizer Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Organizer slug is correct\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response.slug).to.eql(\"qatesting\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Organizer name exists\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response.name).to.be.a(\"string\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API16: Request Without API Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Authentication error is returned\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(Object.keys(data).length).to.be.greaterThan(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/?Accept=application/json",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "Accept",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API17: Request with Invalid API Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Authentication error details are returned\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(Object.keys(data).length).to.be.greaterThan(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token invalid_test_token_12345",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Organizer and Event API",
+      "item": [
+        {
+          "name": "AP02 - Get Organizer Events",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains results array\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.results).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains pagination fields\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"count\");\r",
+                  "    pm.expect(data).to.have.property(\"next\");\r",
+                  "    pm.expect(data).to.have.property(\"previous\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"QA event exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    const event = data.results.find(\r",
+                  "        item => item.slug === \"qa\"\r",
+                  "    );\r",
+                  "\r",
+                  "    pm.expect(event).to.not.be.undefined;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API03 - Get Event Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Event slug is correct\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.slug).to.eql(\"qa\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Event name exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.name).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Event currency exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.currency).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Event timezone exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.timezone).to.be.a(\"string\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Product API",
+      "item": [
+        {
+          "name": "API04 - Get Product List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains products array\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.results).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product count is valid\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.count).to.be.a(\"number\");\r",
+                  "    pm.expect(data.count).to.be.at.least(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product fields are valid\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    if (data.results.length > 0) {\r",
+                  "        const product = data.results[0];\r",
+                  "\r",
+                  "        pm.expect(product).to.have.property(\"id\");\r",
+                  "        pm.expect(product).to.have.property(\"name\");\r",
+                  "        pm.expect(product).to.have.property(\"default_price\");\r",
+                  "        pm.expect(product).to.have.property(\"active\");\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product IDs are unique\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    const ids = data.results.map(item => item.id);\r",
+                  "\r",
+                  "    pm.expect(new Set(ids).size).to.eql(ids.length);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API05: Get Single Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product ID matches requested ID\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.id).to.eql(\r",
+                  "        Number(pm.environment.get(\"product_id\"))\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product name exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.name).to.be.an(\"object\");\r",
+                  "    pm.expect(data.name.en).to.be.a(\"string\");\r",
+                  "    pm.expect(data.name.en.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product price field exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"default_price\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product active status is Boolean\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.active).to.be.a(\"boolean\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/{{product_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                "{{product_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API09: Create Product with Valid Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product has an ID\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product name is correct\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.name.en).to.eql(\"API Test Product\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product price is correct\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.default_price).to.eql(\"25.00\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product is active\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.active).to.eql(true);\r",
+                  "});\r",
+                  "\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.environment.set(\"created_product_id\", data.id);\r",
+                  "\r",
+                  "    console.log(\"Created Product ID:\", data.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": {\r\n        \"en\": \"API Test Product\"\r\n    },\r\n    \"default_price\": \"25.00\",\r\n    \"admission\": true,\r\n    \"active\": true,\r\n    \"personalized\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API10: Create Product with Optional Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product name is correct\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.name.en).to.eql(\r",
+                  "        \"API Optional Fields Product\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Internal name is saved\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.internal_name).to.eql(\r",
+                  "        \"API-OPTIONAL-001\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Description is saved\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.description.en).to.include(\r",
+                  "        \"optional API fields\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Order limits are correct\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.min_per_order).to.eql(1);\r",
+                  "    pm.expect(data.max_per_order).to.eql(5);\r",
+                  "});\r",
+                  "\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.environment.set(\"optional_product_id\", data.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": {\r\n        \"en\": \"API Optional Fields Product\"\r\n    },\r\n    \"default_price\": \"35.00\",\r\n    \"admission\": true,\r\n    \"active\": true,\r\n    \"personalized\": false,\r\n    \"internal_name\": \"API-OPTIONAL-001\",\r\n    \"description\": {\r\n        \"en\": \"Product created to test optional API fields.\"\r\n    },\r\n    \"allow_cancel\": true,\r\n    \"min_per_order\": 1,\r\n    \"max_per_order\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API11: Create Product Without Required Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validation error details are returned\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(Object.keys(data).length).to.be.greaterThan(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"default_price\": \"20.00\",\r\n    \"admission\": true,\r\n    \"active\": true,\r\n    \"personalized\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API12: Create Product with Invalid Price",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validation error details are returned\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(Object.keys(data).length).to.be.greaterThan(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": {\r\n        \"en\": \"API Invalid Price Product\"\r\n    },\r\n    \"default_price\": \"not-a-number\",\r\n    \"admission\": true,\r\n    \"active\": true,\r\n    \"personalized\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API13: Update Existing Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product name is updated\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.name.en).to.eql(\"API Updated Product\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product price is updated\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.default_price).to.eql(\"30.00\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product ID remains unchanged\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(String(data.id)).to.eql(\r",
+                  "        String(pm.environment.get(\"created_product_id\"))\r",
+                  "    );\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": {\r\n        \"en\": \"API Updated Product\"\r\n    },\r\n    \"default_price\": \"30.00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/{{created_product_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                "{{created_product_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API14: Update Product with Invalid Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validation error details are returned\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(Object.keys(data).length).to.be.greaterThan(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"default_price\": \"invalid-price\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/{{created_product_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                "{{created_product_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API15: Delete Test Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/{{optional_product_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                "{{optional_product_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Category API",
+      "item": [
+        {
+          "name": "API06: Get Product Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains categories array\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.results).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination fields exist\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"count\");\r",
+                  "    pm.expect(data).to.have.property(\"next\");\r",
+                  "    pm.expect(data).to.have.property(\"previous\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Category IDs are unique\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    const ids = data.results.map(category => category.id);\r",
+                  "\r",
+                  "    pm.expect(new Set(ids).size).to.eql(ids.length);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Category names have valid structure\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    data.results.forEach(category => {\r",
+                  "        pm.expect(category.name).to.be.an(\"object\");\r",
+                  "        pm.expect(category.name.en).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "categories",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Quota API",
+      "item": [
+        {
+          "name": "API07: Get Quota List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains quota results\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.results).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination fields exist\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"count\");\r",
+                  "    pm.expect(data).to.have.property(\"next\");\r",
+                  "    pm.expect(data).to.have.property(\"previous\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quota IDs are unique\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    const ids = data.results.map(quota => quota.id);\r",
+                  "\r",
+                  "    pm.expect(new Set(ids).size).to.eql(ids.length);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quota names have valid structure\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    data.results.forEach(quota => {\r",
+                  "        pm.expect(quota.name).to.be.a(\"string\");\r",
+                  "        pm.expect(quota.name.length).to.be.greaterThan(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/quotas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "quotas",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API08: Get Single Quota",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quota ID matches requested ID\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.id).to.eql(\r",
+                  "        Number(pm.environment.get(\"quota_id\"))\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quota name is valid\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.name).to.be.a(\"string\");\r",
+                  "    pm.expect(data.name.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quota size is present\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"size\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quota item assignments are valid\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/quotas/{{quota_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "quotas",
+                "{{quota_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pagination and Filtering",
+      "item": [
+        {
+          "name": "API18: Test Pagination and Product Filtering",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination fields exist\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"count\");\r",
+                  "    pm.expect(data).to.have.property(\"next\");\r",
+                  "    pm.expect(data).to.have.property(\"previous\");\r",
+                  "    pm.expect(data.results).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All returned products are active\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    data.results.forEach(product => {\r",
+                  "        pm.expect(product.active).to.eql(true);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Search results match API keyword\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    data.results.forEach(product => {\r",
+                  "        const name = Object.values(product.name || {}).join(\" \");\r",
+                  "        const internalName = product.internal_name || \"\";\r",
+                  "\r",
+                  "        pm.expect(\r",
+                  "            (name + \" \" + internalName).toLowerCase()\r",
+                  "        ).to.include(\"api\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{api_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizers/{{organizer_slug}}/events/{{event_slug}}/items/?page=1&search=API&active=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizers",
+                "{{organizer_slug}}",
+                "events",
+                "{{event_slug}}",
+                "items",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "search",
+                  "value": "API"
+                },
+                {
+                  "key": "active",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

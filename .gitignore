@@ -12,7 +12,6 @@ venv/
 
 # Test reports
 report.html
-reports/
 screenshots/
 
 # Environment variables
