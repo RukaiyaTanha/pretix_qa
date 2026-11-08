@@ -6,11 +6,15 @@ UI test automation for the admin panel of [Pretix](https://github.com/pretix/pre
 
 | Metric | Value |
 |---|---|
-| Test Duration | 5 min 46 sec |
-| Test Framework | Pytest |
-| UI Automation | Selenium WebDriver |
+| Total Tests | [20] |
+| Passed | [19] |
+| Failed | [1] |
+| Skipped | [0] |
+| Duration | 5 min 46 sec |
 | CI/CD | Jenkins |
-| Report | HTML test report |
+| Test Report | HTML Report |
+
+The full HTML report is available as a Jenkins build artifact.
 
 The test suite covers product category management, product management, and quota management.
 
